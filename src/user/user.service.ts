@@ -25,7 +25,7 @@ export class UserService {
         return false;
     }
 
-    async getUSerByLoginPassword(email: string, password: string) : Promise<UserDocument | null>{
+    async getUserByLoginPassword(email: string, password: string) : Promise<UserDocument | null>{
         const user = await this.UserModel.findOne({email}) as UserDocument;
 
         if(user){
@@ -38,5 +38,9 @@ export class UserService {
         }
 
         return null
+    }
+
+    async getUserById(id: string){
+        return await this.UserModel.findById(id)
     }
 }
