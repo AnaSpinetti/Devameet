@@ -17,10 +17,8 @@ export class AuthService {
 
     async login(dto: LoginDTO){
         this.logger.debug('Login started');
-
         const user = await this.userService.getUserByLoginPassword(dto.login, dto.password);
         
-
         if(user == null){
             throw new BadRequestException(MessageHelper.AUTH_PASSWORD_OR_LOGIN_NOT_FOUND);
         }

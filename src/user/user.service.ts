@@ -7,16 +7,16 @@ import * as CryptoJS from "crypto-js"
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel(User.name) private readonly UserModel:Model<UserDocument>){}
+    constructor(@InjectModel(User.name) private readonly userModel:Model<UserDocument>){}
 
     async create(dto: RegisterDto){
         dto.password = CryptoJS.AES.encrypt(dto.password, process.env.USER_CYPHER_SECRET_KEY).toString()
-        const createdUser = new this.UserModel(dto);
+        const createdUser = new this.userModel(dto);
         await createdUser.save();
     }
 
     async existsByEmail(email: string) : Promise<Boolean>{
-        const result = await this.UserModel.findOne({email});
+        const result = await this.userModel.findOne({email});
 
         if(result){
             return true;
@@ -26,10 +26,10 @@ export class UserService {
     }
 
     async getUserByLoginPassword(email: string, password: string) : Promise<UserDocument | null>{
-        const user = await this.UserModel.findOne({email}) as UserDocument;
+        const user = await this.userModel.findOne({email}) as UserDocument;
 
         if(user){
-            const bytes = CryptoJS.AES.decrypt(password, process.env.USER_CYPHER_SECRET_KEY);
+            const bytes = CryptoJS.AES.decrypt(user.password, process.env.USER_CYPHER_SECRET_KEY);
             const savedPassword = bytes.toString(CryptoJS.enc.Utf8);
 
             if(password == savedPassword){
@@ -41,6 +41,6 @@ export class UserService {
     }
 
     async getUserById(id: string){
-        return await this.UserModel.findById(id)
+        return await this.userModel.findById(id)
     }
 }
